@@ -6,7 +6,7 @@ export default class PingController {
         res.status(200);
         return res.json({
             status: 200,
-            message: "Pong from mses-data"
+            message: "Pong from host 3"
         });
     }
 }

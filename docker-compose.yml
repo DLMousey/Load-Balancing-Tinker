@@ -1,49 +1,64 @@
 version: '3'
+#services:
+#  nginx:
+#    image: nginx:latest
+#    volumes:
+#      - ./configs/nginx:/etc/nginx/conf.d
+#    restart: unless-stopped
+#    ports:
+#      - 80:80
+#    container_name: mses_nginx
+#    links:
+#      - auth
+#      - data
+
 services:
-  nginx:
-    image: nginx:latest
+
+  host1:
+    image: node:latest
     volumes:
-      - ./configs/nginx:/etc/nginx/conf.d
+      - ./host-1/src/:/usr/src/service/src
+      - ./host-1/tsconfig.json:/usr/src/service/tsconfig.json
+      - ./host-1/tslint.json:/usr/src/service/tslint.json
+      - ./host-1/package.json:/usr/src/service/package.json
+      - ./host-1/package-lock.json:/usr/src/service/package-lock.json
+    working_dir: /usr/src/service
+    command: bash -c "npm ci -q && npm start"
+    container_name: lb_node_1
+
+  host2:
+    image: node:latest
+    volumes:
+      - ./host-2/src/:/usr/src/service/src
+      - ./host-2/tsconfig.json:/usr/src/service/tsconfig.json
+      - ./host-2/tslint.json:/usr/src/service/tslint.json
+      - ./host-2/package.json:/usr/src/service/package.json
+      - ./host-2/package-lock.json:/usr/src/service/package-lock.json
+    working_dir: /usr/src/service
+    command: bash -c "npm ci -q && npm start"
+    container_name: lb_node_2
+
+  host3:
+    image: node:latest
+    volumes:
+      - ./host-3/src/:/usr/src/service/src
+      - ./host-3/tsconfig.json:/usr/src/service/tsconfig.json
+      - ./host-3/tslint.json:/usr/src/service/tslint.json
+      - ./host-3/package.json:/usr/src/service/package.json
+      - ./host-3/package-lock.json:/usr/src/service/package-lock.json
+    working_dir: /usr/src/service
+    command: bash -c "npm ci -q && npm start"
+    container_name: lb_node_3
+
+  haproxy:
+    image: haproxy:latest
     restart: unless-stopped
     ports:
       - 80:80
-    container_name: mses_nginx
+    volumes:
+      - ./configs/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    container_name: lb_haproxy
     links:
-      - auth
-      - data
-
-  auth:
-    image: node:latest
-    volumes:
-      - ./auth/src/:/usr/src/service/src
-      - ./auth/tsconfig.json:/usr/src/service/tsconfig.json
-      - ./auth/tslint.json:/usr/src/service/tslint.json
-      - ./auth/package.json:/usr/src/service/package.json
-      - ./auth/package-lock.json:/usr/src/service/package-lock.json
-    working_dir: /usr/src/service
-    command: bash -c "npm ci -q && npm start"
-    container_name: mses_auth
-
-  data:
-    image: node:latest
-    volumes:
-      - ./data/src/:/usr/src/service/src
-      - ./data/tsconfig.json:/usr/src/service/tsconfig.json
-      - ./data/tslint.json:/usr/src/service/tslint.json
-      - ./data/package.json:/usr/src/service/package.json
-      - ./data/package-lock.json:/usr/src/service/package-lock.json
-    working_dir: /usr/src/service
-    command: bash -c "npm ci -q && npm start"
-    container_name: mses_data
-
-  notifications:
-    image: node:latest
-    volumes:
-      - ./notifications/src/:/usr/src/service/src
-      - ./notifications/tsconfig.json:/usr/src/service/tsconfig.json
-      - ./notifications/tslint.json:/usr/src/service/tslint.json
-      - ./notifications/package.json:/usr/src/service/package.json
-      - ./notifications/package-lock.json:/usr/src/service/package-lock.json
-    working_dir: /usr/src/service
-    command: bash -c "npm ci -q && npm start"
-    container_name: mses_notifications
+      - host1
+      - host2
+      - host3

@@ -21,5 +21,5 @@ Object.values(ApiRouters).forEach((router: any) => {
 });
 
 app.listen(port, () => {
-    console.log(`Data API: Running on port ${port}`);
+    console.log(`Auth API: Running on port ${port}`);
 });
