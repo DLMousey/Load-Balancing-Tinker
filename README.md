@@ -1,6 +1,6 @@
-# Microservices Tinker (mses-tinker)
+# Load Balancing Tinker (lb-tinker)
 
-Nothing particularly exciting going on in here, just fiddling around with Microservices using Docker + Node (TS).
+Nothing particularly exciting going on in here, just fiddling around with load balancing using HAProxy. This repo is pretty much identical to DLMousey/Microservices-Tinker.
 
 ## Setting up
 
@@ -8,28 +8,24 @@ If you'd like to fiddle around with this yourself;
 
 - Modify `/etc/hosts`, add the following new lines to the end of the file;
 ```
-127.0.0.1 mses-auth
-127.0.0.1 mses-data
-127.0.0.1 mses-notifications
+127.0.0.1 lbhost
 ```
 
 - Clone this repo
 
 - Run `make dev` or `docker-compose up --build` if you don't have `make` installed. You will see a _lot_ of output.
-Eventually you will see `mses_notifications`, `mses_data` and `mses_auth` report that they are running - the applications have now started.
+Eventually you will see `host1`, `host2` and `host2` report that they are running - the applications have now started.
 
-- Navigate to the following URLs in your browser;
+- Navigate to the following URL in your browser;
 ```
-http://mses-auth/api/ping
-http://mses-data/api/ping
-http://mses-notifications/api/ping
+http://lbhost/api/ping
 ```
 
 You should see a response following this format;
 ```json
 { 
   "status":200,
-  "message":"Pong from mses-[SERVICE-NAME]"
+  "message":"Pong from host [HOST-NUMBER]"
 }
 ```
 
